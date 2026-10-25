@@ -1,0 +1,40 @@
+@model IReadOnlyList<Services.Models.NewsArticleDetails>
+@{
+    ViewData["Title"] = "My news history";
+}
+<div class="page-header">
+    <div><p class="page-kicker">Editorial desk</p><h1 class="page-title">My news history</h1><p class="page-description">Articles you created, newest first.</p></div>
+    <div class="page-actions"><a asp-action="Index" class="btn btn-outline-primary">Manage news</a></div>
+</div>
+<p class="result-count mb-3" role="status">@Model.Count @(Model.Count == 1 ? "article" : "articles") created</p>
+@if (Model.Count == 0)
+{
+    <div class="surface-card empty-state"><strong>You have not created any articles yet.</strong><span>Create an article in News management to see it here.</span></div>
+}
+else
+{
+    <div class="list-group history-list">
+        @foreach (var article in Model)
+        {
+            <a asp-action="Details" asp-route-id="@article.Id" class="list-group-item list-group-item-action">
+                <div class="d-flex flex-wrap justify-content-between gap-2">
+                    <h2 class="h5 mb-1">@(article.Title ?? article.Headline)</h2>
+                    @if (article.CreatedDate is { } createdDate)
+                    {
+                        <time class="small text-muted" datetime="@createdDate.ToString("yyyy-MM-ddTHH:mm:ss")">@createdDate.ToString("dd/MM/yyyy HH:mm")</time>
+                    }
+                    else
+                    {
+                        <span class="small text-muted">Unknown date</span>
+                    }
+                </div>
+                <p class="mb-1">@article.Headline</p>
+                <div class="d-flex flex-wrap gap-2 align-items-center">
+                    <span class="status-badge @(article.Status == true ? "status-active" : article.Status == false ? "status-inactive" : "status-unspecified")">@(article.Status == true ? "Active" : article.Status == false ? "Inactive" : "Unspecified")</span>
+                    @if (article.CategoryName is not null) { <span class="small text-muted">@article.CategoryName</span> }
+                    @foreach (var tag in article.Tags) { <span class="tag-badge">@tag.Name</span> }
+                </div>
+            </a>
+        }
+    </div>
+}

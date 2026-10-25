@@ -1,0 +1,37 @@
+@model IReadOnlyList<BusinessObjects.Models.NewsArticle>
+@{
+    ViewData["Title"] = "News";
+}
+<div class="page-header">
+    <div><p class="page-kicker">FU community</p><h1 class="page-title">Latest news</h1><p class="page-description">News from the FU community.</p></div>
+</div>
+<div class="news-feed">
+@if (Model.Count == 0)
+{
+    <div class="surface-card empty-state"><strong>No news articles are available yet.</strong><span>Please check back later.</span></div>
+}
+@foreach (var article in Model)
+{
+    <article class="card mb-3">
+        <div class="card-body">
+            <h2>@(article.NewsTitle ?? article.Headline)</h2>
+            <div class="news-meta">
+            @if (article.CreatedDate.HasValue)
+            {
+                <time datetime="@article.CreatedDate.Value.ToString("yyyy-MM-ddTHH:mm:ss")">@article.CreatedDate.Value.ToString("dd/MM/yyyy HH:mm")</time>
+            }
+            @if (article.Category is not null) { <span>@article.Category.CategoryName</span> }
+            </div>
+            <p class="news-headline">@article.Headline</p>
+            <div class="news-body">@article.NewsContent</div>
+            <div class="mb-2">
+                @foreach (var tag in article.Tags.OrderBy(tag => tag.TagName)) { <span class="tag-badge">@tag.TagName</span> }
+            </div>
+            @if (!string.IsNullOrWhiteSpace(article.NewsSource))
+            {
+                <p class="small text-muted mb-0">Source: @article.NewsSource</p>
+            }
+        </div>
+    </article>
+}
+</div>

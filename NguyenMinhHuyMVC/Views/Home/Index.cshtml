@@ -1,0 +1,12 @@
+@{
+    ViewData["Title"] = "Home";
+}
+<div class="surface-card state-panel">
+    <p class="page-kicker">FU News</p>
+    <h1 class="page-title">News for the FU community</h1>
+    <p class="page-description">Read current articles or sign in to your workspace.</p>
+    <div class="page-actions">
+        <a asp-controller="News" asp-action="Index" class="btn btn-primary">Read news</a>
+        <a asp-controller="Account" asp-action="Login" class="btn btn-outline-primary">Sign in</a>
+    </div>
+</div>

@@ -1,0 +1,71 @@
+@model NewsReportViewModel
+@{
+    ViewData["Title"] = "News report";
+}
+<div class="page-header">
+    <div>
+        <p class="page-kicker">Administration</p>
+        <h1 class="page-title">News report</h1>
+        <p class="page-description">Articles created within the selected dates, newest first.</p>
+    </div>
+    <div class="page-actions"><a asp-action="Index" class="btn btn-outline-secondary">Admin dashboard</a></div>
+</div>
+<form asp-action="Report" method="get" class="filter-panel">
+  <div class="row g-3 align-items-end">
+    <div asp-validation-summary="ModelOnly" class="col-12 text-danger" role="alert"></div>
+    <p class="col-12 form-note mb-0">Both dates are required.</p>
+    <div class="col-sm-6 col-lg-3">
+        <label asp-for="StartDate" class="form-label">Start date <span class="required-indicator" aria-hidden="true">*</span></label>
+        <input asp-for="StartDate" type="date" class="form-control" aria-required="true" aria-describedby="reportStartDateError" />
+        <span asp-validation-for="StartDate" id="reportStartDateError" class="text-danger"></span>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <label asp-for="EndDate" class="form-label">End date <span class="required-indicator" aria-hidden="true">*</span></label>
+        <input asp-for="EndDate" type="date" class="form-control" aria-required="true" aria-describedby="reportEndDateError" />
+        <span asp-validation-for="EndDate" id="reportEndDateError" class="text-danger"></span>
+    </div>
+    <div class="col-12 col-lg-auto"><button type="submit" class="btn btn-primary">Generate report</button></div>
+  </div>
+</form>
+@if (Model.Report is { } report)
+{
+    <p class="result-count mb-3">From @report.StartDate.ToString("dd/MM/yyyy") through @report.EndDate.ToString("dd/MM/yyyy"), including both dates.</p>
+    <div class="row g-3 mb-4">
+        <div class="col-sm-6 col-lg-3"><div class="surface-card metric-card h-100"><div class="metric-label">Total articles</div><div class="metric-value">@report.Total</div></div></div>
+        <div class="col-sm-6 col-lg-3"><div class="surface-card metric-card h-100"><div class="metric-label">Active</div><div class="metric-value">@report.Active</div></div></div>
+        <div class="col-sm-6 col-lg-3"><div class="surface-card metric-card h-100"><div class="metric-label">Inactive</div><div class="metric-value">@report.Inactive</div></div></div>
+        <div class="col-sm-6 col-lg-3"><div class="surface-card metric-card h-100"><div class="metric-label">Unspecified</div><div class="metric-value">@report.Unspecified</div></div></div>
+    </div>
+    @if (report.Total == 0)
+    {
+        <div class="surface-card empty-state"><strong>No articles were created during this date range.</strong><span>Choose another range to review more news activity.</span></div>
+    }
+    else
+    {
+        <section class="data-panel" aria-label="News report results">
+          <div class="data-panel-header"><h2>Articles in range</h2><p class="result-count">@report.Total @(report.Total == 1 ? "article" : "articles")</p></div>
+          <p class="table-scroll-hint">Scroll the table horizontally to see all columns.</p>
+          <div class="table-responsive" tabindex="0" role="region" aria-label="News report table">
+            <table class="table table-hover align-middle data-table">
+                <caption class="visually-hidden">News articles created in the selected date range</caption>
+                <thead><tr><th scope="col">Created</th><th scope="col">Article</th><th scope="col">Category</th><th scope="col">Author</th><th scope="col">Status</th></tr></thead>
+                <tbody>
+                    @foreach (var article in report.Rows)
+                    {
+                        <tr>
+                            <td class="text-nowrap">@article.CreatedDate.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td class="text-break"><div class="fw-semibold">@article.Title</div><div class="small text-muted">@article.Headline</div></td>
+                            <td>@(article.CategoryName ?? "No category")</td>
+                            <td>@(article.AuthorName ?? "Unknown author")</td>
+                            <td><span class="status-badge @(article.Status == true ? "status-active" : article.Status == false ? "status-inactive" : "status-unspecified")">@(article.Status == true ? "Active" : article.Status == false ? "Inactive" : "Unspecified")</span></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+          </div>
+        </section>
+    }
+}
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

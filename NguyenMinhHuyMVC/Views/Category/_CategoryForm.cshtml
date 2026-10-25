@@ -1,0 +1,59 @@
+@model CategoryFormViewModel
+@{
+    var isEdit = Model.Id.HasValue;
+}
+<form asp-controller="Category" asp-action="@(isEdit ? "Edit" : "Create")" method="post" id="categoryForm" class="d-flex flex-column overflow-hidden">
+    <div class="modal-header">
+        <h2 class="modal-title h5" id="categoryModalLabel">@(isEdit ? "Edit category" : "Create category")</h2>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body">
+        <p class="form-note">Fields marked <span class="required-indicator" aria-hidden="true">*</span> are required.</p>
+        @if (isEdit)
+        {
+            <input asp-for="Id" type="hidden" />
+            <p class="small text-muted">Category #@Model.Id</p>
+        }
+        <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+        <div id="categoryFormError" class="alert alert-danger d-none" role="alert"></div>
+        <div class="mb-3">
+            <label asp-for="Name" class="form-label">Name <span class="required-indicator" aria-hidden="true">*</span></label>
+            <input asp-for="Name" class="form-control" aria-required="true" aria-describedby="categoryNameError" />
+            <span asp-validation-for="Name" id="categoryNameError" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Description" class="form-label">Description <span class="required-indicator" aria-hidden="true">*</span></label>
+            <textarea asp-for="Description" class="form-control" rows="3" aria-required="true" aria-describedby="categoryDescriptionError"></textarea>
+            <span asp-validation-for="Description" id="categoryDescriptionError" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="ParentId" class="form-label">Parent category (optional)</label>
+            <select asp-for="ParentId" class="form-select" aria-describedby="parentHelp categoryParentError">
+                <option value="">None (top-level category)</option>
+                @foreach (var parent in Model.ParentOptions)
+                {
+                    <option value="@parent.Id">@parent.Name (#@parent.Id)@(parent.IsActive == true ? "" : " - Inactive/unspecified")</option>
+                }
+                @if (Model.ParentId.HasValue && !Model.ParentOptions.Any(parent => parent.Id == Model.ParentId))
+                {
+                    <option value="@Model.ParentId" disabled>Unavailable parent (#@Model.ParentId) - choose another</option>
+                }
+            </select>
+            <span asp-validation-for="ParentId" id="categoryParentError" class="text-danger"></span>
+            <div id="parentHelp" class="form-text">Choose a parent or keep this category at the top level.</div>
+        </div>
+        <div class="mb-3">
+            <label asp-for="IsActive" class="form-label">Status <span class="required-indicator" aria-hidden="true">*</span></label>
+            <select asp-for="IsActive" class="form-select" aria-required="true" aria-describedby="categoryStatusError">
+                <option value="">Choose status</option>
+                <option value="true">Active</option>
+                <option value="false">Inactive</option>
+            </select>
+            <span asp-validation-for="IsActive" id="categoryStatusError" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="submit" class="btn btn-primary">@(isEdit ? "Save changes" : "Create category")</button>
+    </div>
+</form>

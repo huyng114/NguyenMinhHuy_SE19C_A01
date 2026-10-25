@@ -1,0 +1,18 @@
+@model Services.Models.NewsArticleDetails
+@{
+    ViewData["Title"] = Model.Title ?? Model.Headline;
+}
+<div class="page-header">
+    <div><p class="page-kicker">Editorial desk</p><h1 class="page-title">Article details</h1></div>
+    <div class="page-actions"><a asp-action="Index" class="btn btn-outline-secondary">Back to news management</a></div>
+</div>
+<article class="surface-card reading-column p-4">
+    <h2 class="h3 mb-3">@(Model.Title ?? Model.Headline)</h2>
+    <p class="news-meta">@(Model.CreatedByName ?? "Unknown author") &middot; @(Model.CreatedDate?.ToString("dd/MM/yyyy HH:mm") ?? "Unknown date") &middot; @(Model.CategoryName ?? "No category")</p>
+    <p><span class="status-badge @(Model.Status == true ? "status-active" : Model.Status == false ? "status-inactive" : "status-unspecified")">@(Model.Status == true ? "Active" : Model.Status == false ? "Inactive" : "Unspecified")</span></p>
+    <p class="news-headline">@Model.Headline</p>
+    <div class="news-body">@Model.Content</div>
+    @if (!string.IsNullOrWhiteSpace(Model.Source)) { <p class="text-muted mt-3">Source: @Model.Source</p> }
+    <div class="mt-3">@foreach (var tag in Model.Tags) { <span class="tag-badge">@tag.Name</span> }</div>
+    @if (Model.ModifiedDate.HasValue) { <p class="small text-muted mt-3">Last updated: @Model.ModifiedDate.Value.ToString("dd/MM/yyyy HH:mm")</p> }
+</article>

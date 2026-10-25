@@ -1,0 +1,91 @@
+@model NewsFormViewModel
+@{
+    var isEdit = !string.IsNullOrEmpty(Model.Id);
+}
+<form asp-controller="StaffNews" asp-action="@(isEdit ? "Edit" : "Create")" method="post" id="newsForm" class="d-flex flex-column overflow-hidden">
+    <div class="modal-header">
+        <h2 class="modal-title h5" id="newsModalLabel">@(isEdit ? "Edit article" : "Create article")</h2>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body">
+        <p class="form-note">Fields marked <span class="required-indicator" aria-hidden="true">*</span> are required.</p>
+        @if (isEdit)
+        {
+            <input asp-for="Id" type="hidden" />
+            <p class="small text-muted">Article #@Model.Id</p>
+        }
+        <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+        <div id="newsFormError" class="alert alert-danger d-none" role="alert"></div>
+        <div class="mb-3">
+            <label asp-for="Title" class="form-label">Title (optional)</label>
+            <input asp-for="Title" class="form-control" aria-describedby="newsTitleError" />
+            <span asp-validation-for="Title" id="newsTitleError" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Headline" class="form-label">Headline <span class="required-indicator" aria-hidden="true">*</span></label>
+            <input asp-for="Headline" class="form-control" aria-required="true" aria-describedby="newsHeadlineError" />
+            <span asp-validation-for="Headline" id="newsHeadlineError" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Content" class="form-label"></label>
+            <textarea asp-for="Content" class="form-control" rows="7" aria-describedby="contentHelp newsContentError"></textarea>
+            <span asp-validation-for="Content" id="newsContentError" class="text-danger"></span>
+            <div id="contentHelp" class="form-text">Up to 4000 characters. Line breaks are preserved.</div>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Source" class="form-label"></label>
+            <input asp-for="Source" class="form-control" aria-describedby="newsSourceError" />
+            <span asp-validation-for="Source" id="newsSourceError" class="text-danger"></span>
+        </div>
+        <div class="row">
+            <div class="col-md-7 mb-3">
+                <label asp-for="CategoryId" class="form-label">Category (optional)</label>
+                <select asp-for="CategoryId" class="form-select" aria-describedby="newsCategoryError">
+                    <option value="">No category</option>
+                    @foreach (var category in Model.Categories)
+                    {
+                        <option value="@category.Id">@category.Name@(category.IsActive == true ? "" : " - Inactive/unspecified")</option>
+                    }
+                    @if (Model.CategoryId.HasValue && !Model.Categories.Any(category => category.Id == Model.CategoryId))
+                    {
+                        <option value="@Model.CategoryId" disabled>Unavailable category - choose another</option>
+                    }
+                </select>
+                <span asp-validation-for="CategoryId" id="newsCategoryError" class="text-danger"></span>
+            </div>
+            <div class="col-md-5 mb-3">
+                <label asp-for="Status" class="form-label">Status <span class="required-indicator" aria-hidden="true">*</span></label>
+                <select asp-for="Status" class="form-select" aria-required="true" aria-describedby="statusHelp newsStatusError">
+                    <option value="">Choose status</option>
+                    <option value="false">Inactive</option>
+                    <option value="true">Active</option>
+                </select>
+                <span asp-validation-for="Status" id="newsStatusError" class="text-danger"></span>
+                <div id="statusHelp" class="form-text">Active articles are visible to everyone.</div>
+            </div>
+        </div>
+        <fieldset class="mb-2">
+            <legend class="fs-6">Tags</legend>
+            <p class="small text-muted">Select tags for this article. Uncheck a tag to remove it from the article.</p>
+            <div class="tag-options">
+                @foreach (var tag in Model.Tags)
+                {
+                    <label class="form-check tag-option">
+                        <input class="form-check-input" type="checkbox" name="TagIds" value="@tag.Id" id="news-tag-@tag.Id" checked="@(Model.TagIds.Contains(tag.Id))" />
+                        <span class="form-check-label">@tag.Name</span>
+                        <span class="tag-note">@tag.Note</span>
+                    </label>
+                }
+            </div>
+            @if (Model.Tags.Count == 0)
+            {
+                <p class="text-muted">No tags are available. You can save this article without tags.</p>
+            }
+            <span asp-validation-for="TagIds" class="text-danger"></span>
+        </fieldset>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="submit" class="btn btn-primary">@(isEdit ? "Save changes" : "Create article")</button>
+    </div>
+</form>

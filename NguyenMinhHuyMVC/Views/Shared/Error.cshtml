@@ -1,0 +1,14 @@
+@model ErrorViewModel
+@{
+    ViewData["Title"] = "Error";
+}
+<div class="surface-card state-panel">
+    <p class="page-kicker">Something went wrong</p>
+    <h1 class="page-title">We could not open this page</h1>
+    <p class="page-description">Please try again. If the problem continues, share the request ID with the project owner.</p>
+    @if (Model.ShowRequestId)
+    {
+        <p class="small text-muted"><strong>Request ID:</strong> <code>@Model.RequestId</code></p>
+    }
+    <a asp-controller="News" asp-action="Index" class="btn btn-primary">Read news</a>
+</div>

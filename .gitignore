@@ -1,0 +1,21 @@
+# Build output and local IDE settings
+**/bin/
+**/obj/
+.vs/
+.idea/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Local agent configuration
+.agents/
+.codex/
+skills-lock.json
+
+# Local overrides and generated files
+**/appsettings.Local.json
+**/appsettings.*.local.json
+*.log
+TestResults/
+artifacts/

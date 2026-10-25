@@ -1,0 +1,30 @@
+@{
+    ViewData["Title"] = "Admin dashboard";
+}
+<div class="page-header">
+    <div>
+        <p class="page-kicker">Administration</p>
+        <h1 class="page-title">Admin dashboard</h1>
+        <p class="page-description">Welcome, @User.Identity?.Name. Manage accounts and review news activity from here.</p>
+    </div>
+</div>
+<section aria-labelledby="adminTasksTitle">
+    <h2 id="adminTasksTitle" class="section-title">Your tasks</h2>
+    <div class="dashboard-grid">
+        <a asp-controller="AdminAccounts" asp-action="Index" class="dashboard-link">
+            <strong>Manage accounts</strong>
+            <span>Create, search and update Staff or Lecturer accounts.</span>
+            <span class="dashboard-arrow">Open accounts →</span>
+        </a>
+        <a asp-controller="Admin" asp-action="Report" class="dashboard-link">
+            <strong>News report</strong>
+            <span>Review articles created within a selected date range.</span>
+            <span class="dashboard-arrow">Open report →</span>
+        </a>
+        <a asp-controller="News" asp-action="Index" class="dashboard-link">
+            <strong>Read news</strong>
+            <span>See the articles currently visible to the FU community.</span>
+            <span class="dashboard-arrow">View public news →</span>
+        </a>
+    </div>
+</section>

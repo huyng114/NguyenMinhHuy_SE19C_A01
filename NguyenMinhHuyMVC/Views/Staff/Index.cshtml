@@ -1,0 +1,40 @@
+@{
+    ViewData["Title"] = "Staff dashboard";
+}
+<div class="page-header">
+    <div>
+        <p class="page-kicker">Editorial desk</p>
+        <h1 class="page-title">Staff dashboard</h1>
+        <p class="page-description">Welcome, @User.Identity?.Name. Organize categories, manage articles and review your work.</p>
+    </div>
+</div>
+<section aria-labelledby="staffTasksTitle">
+    <h2 id="staffTasksTitle" class="section-title">Your tasks</h2>
+    <div class="dashboard-grid">
+        <a asp-controller="Category" asp-action="Index" class="dashboard-link">
+            <strong>Manage categories</strong>
+            <span>Keep the news library organized.</span>
+            <span class="dashboard-arrow">Open categories →</span>
+        </a>
+        <a asp-controller="StaffNews" asp-action="Index" class="dashboard-link">
+            <strong>Manage news</strong>
+            <span>Create, edit and publish articles with tags.</span>
+            <span class="dashboard-arrow">Open articles →</span>
+        </a>
+        <a asp-controller="StaffNews" asp-action="History" class="dashboard-link">
+            <strong>My news history</strong>
+            <span>Review the articles you created.</span>
+            <span class="dashboard-arrow">View history →</span>
+        </a>
+        <a asp-controller="StaffProfile" asp-action="Index" class="dashboard-link">
+            <strong>My profile</strong>
+            <span>Update your name, email or password.</span>
+            <span class="dashboard-arrow">Open profile →</span>
+        </a>
+        <a asp-controller="News" asp-action="Index" class="dashboard-link">
+            <strong>Read news</strong>
+            <span>See the articles visible to the FU community.</span>
+            <span class="dashboard-arrow">View public news →</span>
+        </a>
+    </div>
+</section>

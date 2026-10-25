@@ -1,0 +1,116 @@
+@{
+    var controllerName = ViewContext.RouteData.Values["controller"]?.ToString();
+    var actionName = ViewContext.RouteData.Values["action"]?.ToString();
+    var isAdmin = User.IsInRole(BusinessObjects.Security.AccountRoles.Admin);
+    var isStaff = User.IsInRole(BusinessObjects.Security.AccountRoles.Staff);
+    var hasWorkspace = isAdmin || isStaff;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - FU News</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/NguyenMinhHuyMVC.styles.css" asp-append-version="true" />
+</head>
+<body>
+    <a class="visually-hidden-focusable skip-link" href="#main-content">Skip to main content</a>
+    <header class="app-header">
+        <div class="app-header-inner">
+            <div class="header-start">
+                @if (hasWorkspace)
+                {
+                    <button class="btn btn-outline-secondary nav-toggle d-xl-none" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#workspaceNavigation" aria-controls="workspaceNavigation" aria-expanded="false"
+                            aria-label="Toggle workspace navigation">
+                        <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M4 6h16M4 12h16M4 18h16" /></svg><span>Menu</span>
+                    </button>
+                }
+                <a class="app-brand" asp-controller="Account" asp-action="Login" aria-label="FU News home">
+                    <span class="brand-mark" aria-hidden="true">FU</span>
+                    <span class="brand-copy"><strong>FU News</strong><small>Management System</small></span>
+                </a>
+            </div>
+            <div class="header-end">
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    @if (!hasWorkspace)
+                    {
+                        <a class="header-news-link" asp-controller="News" asp-action="Index" aria-current="@(controllerName == "News" ? "page" : null)">Read news</a>
+                    }
+                    <span class="header-identity">
+                        <span class="header-role">@(isAdmin ? "Administrator" : isStaff ? "Staff" : "Lecturer")</span>
+                        <span class="header-name">@User.Identity.Name</span>
+                    </span>
+                    <form asp-controller="Account" asp-action="Logout" method="post">
+                        <button type="submit" class="btn btn-outline-secondary btn-sm">Logout</button>
+                    </form>
+                }
+                else
+                {
+                    <a class="header-news-link" asp-controller="News" asp-action="Index" aria-current="@(controllerName == "News" ? "page" : null)">Read news</a>
+                    <a class="btn btn-primary btn-sm" asp-controller="Account" asp-action="Login">Sign in</a>
+                }
+            </div>
+        </div>
+    </header>
+    <div class="app-shell @(hasWorkspace ? "has-sidebar" : "no-sidebar")">
+        @if (hasWorkspace)
+        {
+            <aside class="app-sidebar collapse d-xl-block" id="workspaceNavigation">
+                <nav aria-label="Workspace navigation">
+                    <p class="sidebar-label">Workspace</p>
+                    @if (isAdmin)
+                    {
+                        <a class="sidebar-link @(controllerName == "Admin" && actionName == "Index" ? "is-active" : "")"
+                           aria-current="@(controllerName == "Admin" && actionName == "Index" ? "page" : null)"
+                           asp-controller="Admin" asp-action="Index">Dashboard</a>
+                        <a class="sidebar-link @(controllerName == "AdminAccounts" ? "is-active" : "")"
+                           aria-current="@(controllerName == "AdminAccounts" ? "page" : null)"
+                           asp-controller="AdminAccounts" asp-action="Index">Accounts</a>
+                        <a class="sidebar-link @(controllerName == "Admin" && actionName == "Report" ? "is-active" : "")"
+                           aria-current="@(controllerName == "Admin" && actionName == "Report" ? "page" : null)"
+                           asp-controller="Admin" asp-action="Report">News report</a>
+                    }
+                    @if (isStaff)
+                    {
+                        <a class="sidebar-link @(controllerName == "Staff" ? "is-active" : "")"
+                           aria-current="@(controllerName == "Staff" ? "page" : null)"
+                           asp-controller="Staff" asp-action="Index">Dashboard</a>
+                        <a class="sidebar-link @(controllerName == "Category" ? "is-active" : "")"
+                           aria-current="@(controllerName == "Category" ? "page" : null)"
+                           asp-controller="Category" asp-action="Index">Categories</a>
+                        <a class="sidebar-link @(controllerName == "StaffNews" && actionName != "History" ? "is-active" : "")"
+                           aria-current="@(controllerName == "StaffNews" && actionName != "History" ? "page" : null)"
+                           asp-controller="StaffNews" asp-action="Index">Manage news</a>
+                        <a class="sidebar-link @(controllerName == "StaffNews" && actionName == "History" ? "is-active" : "")"
+                           aria-current="@(controllerName == "StaffNews" && actionName == "History" ? "page" : null)"
+                           asp-controller="StaffNews" asp-action="History">My history</a>
+                        <a class="sidebar-link @(controllerName == "StaffProfile" ? "is-active" : "")"
+                           aria-current="@(controllerName == "StaffProfile" ? "page" : null)"
+                           asp-controller="StaffProfile" asp-action="Index">My profile</a>
+                    }
+                    <p class="sidebar-label sidebar-label-secondary">Explore</p>
+                    <a class="sidebar-link @(controllerName == "News" ? "is-active" : "")"
+                       aria-current="@(controllerName == "News" ? "page" : null)"
+                       asp-controller="News" asp-action="Index">Public news</a>
+                </nav>
+            </aside>
+        }
+        <div class="app-main">
+            <main id="main-content" class="app-content" tabindex="-1">
+                @RenderBody()
+            </main>
+            <footer class="app-footer">
+                <div class="footer-inner">&copy; 2026 FU News Management System</div>
+            </footer>
+        </div>
+    </div>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
